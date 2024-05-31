@@ -137,4 +137,7 @@ dmypy.json
 .pyre/
 
 # Processor output
-output
+output*
+
+# law
+.law
