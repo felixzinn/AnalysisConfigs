@@ -335,13 +335,21 @@ class Plotter(law.Task):
     blind = luigi.BoolParameter(
         default=True, description="If True, only MC is plotted. default=True"
     )
+    plot_workers = luigi.IntParameter(
+        default=4, description="number of workers to plot in parallel"
+    )
 
     def requires(self):
         return Runner.req(self)
+    
+    @property
+    def full_output_dir(self):
+        blind_str = "blind" if self.blind else "data-mc"
+        return os.path.join(os.path.abspath(self.output_dir), self.plot_dir, blind_str)
 
     def output(self):
         return law.LocalFileTarget(
-            os.path.join(self.output_dir, self.plot_dir, ".plots_done")
+            os.path.join(self.full_output_dir, ".plots_done")
         )
 
     def load_plotting_style(self):
@@ -378,9 +386,12 @@ class Plotter(law.Task):
             variables=output_coffea["variables"].keys(),
             hist_objs=output_coffea["variables"],
             datasets_metadata=output_coffea["datasets_metadata"],
-            plot_dir=os.path.join(self.output_dir, self.plot_dir),
+            plot_dir=self.output().abs_dirname,
             style_cfg=parameters,
             verbose=self.plot_verbose,
+            workers=self.plot_workers
         )
 
         plotter.plot_datamc_all(syst=False)
+
+        self.output().touch()

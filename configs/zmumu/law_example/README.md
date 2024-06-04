@@ -62,7 +62,7 @@ law run Plotter --help
 ```
 Parameters of subsequent tasks can be set too by explicitly specifying the task:
 ```bash
-law run Plotter --cfg config.py --Runner-executor dask@lxplus --CreateDatasets-regex-sites 'T[123]_(FR|IT|DE|BE|CH|UK)_\w+'`
+law run Plotter --cfg config.py --Runner-executor dask@lxplus --CreateDatasets-regex-sites 'T[123]_(FR|IT|DE|BE|CH|UK)_\w+'
 ```
 This will set the executor to `dask@lxplus` and the sites used for the dataset creation are limited to the specified regex.
 
