@@ -1,5 +1,6 @@
 plotting_style:
 
-  labels:
+  labels_mc:
     DYJetsToLL: DY
 
+  experiment_label_loc: 2

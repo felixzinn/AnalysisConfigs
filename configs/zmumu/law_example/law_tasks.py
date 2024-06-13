@@ -338,19 +338,20 @@ class Plotter(law.Task):
     plot_workers = luigi.IntParameter(
         default=4, description="number of workers to plot in parallel"
     )
+    syst = luigi.BoolParameter(
+        default=False, description="Wether to plot systematic uncertainty bands"
+    )
 
     def requires(self):
         return Runner.req(self)
-    
+
     @property
     def full_output_dir(self):
         blind_str = "blind" if self.blind else "data-mc"
         return os.path.join(os.path.abspath(self.output_dir), self.plot_dir, blind_str)
 
     def output(self):
-        return law.LocalFileTarget(
-            os.path.join(self.full_output_dir, ".plots_done")
-        )
+        return law.LocalFileTarget(os.path.join(self.full_output_dir, ".plots_done"))
 
     def load_plotting_style(self):
         parameters = OmegaConf.load(self.input()["parameters"].abspath)
@@ -389,9 +390,9 @@ class Plotter(law.Task):
             plot_dir=self.output().abs_dirname,
             style_cfg=parameters,
             verbose=self.plot_verbose,
-            workers=self.plot_workers
+            workers=self.plot_workers,
         )
 
-        plotter.plot_datamc_all(syst=False)
+        plotter.plot_datamc_all(syst=self.syst)
 
         self.output().touch()
